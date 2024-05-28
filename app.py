@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import demucs.api
 
 app = Flask(__name__)
@@ -7,6 +7,33 @@ app = Flask(__name__)
 separator = demucs.api.Separator()
 
 @app.route('/')
+def index():
+    return '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Process Audio</title>
+        <script>
+            function processAudio() {
+                fetch('/process_audio', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Erro ao processar o arquivo de áudio.');
+                    });
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="processAudio()">Processar Áudio</button>
+    </body>
+    </html>
+    '''
+
+@app.route('/process_audio', methods=['POST'])
 def process_audio():
     audio_file_path = './audio.wav'
 
